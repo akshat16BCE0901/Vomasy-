@@ -143,43 +143,49 @@ con.connect(function(err)
         var query = "SELECT * from login where username='"+username+"' and password='"+password+"' and role='"+role+"'";
         con.query(query,function(err,result)
         {
-            if(result.length>0)
+            if(result)
             {
-                if(role=="employee")
+                if(result.length>0)
                 {
-                    var eves = " select * from events where coordinator_id="+result[0].emp_id;
-                    con.query(eves,function(err,events)
+                    if(role=="employee")
                     {
-                        if(err) throw err;
-                        res.render('empdashboard.ejs',{"title":"Dashboard | "+result[0].username,"events":events});
-                    });
-
-                }
-                else
-                {
-                    var eves = "select A.*,B.name as cname,B.phone as cphone from `events` as A inner join `employees` as B on A.coordinator_id = B.id where A.id not in (select `event_id` from `event_volunteers` where `vol_id`='"+result[0].vol_id+"')";
-                    con.query(eves,function(err,events)
-                    {
-                        if(err) throw err;
-                        var applied_eve = "select * ,B.status as can_sta,C.name as cname,C.phone,A.name as ename from events as A inner join event_volunteers as B on A.id = B.event_id inner join employees as C on A.coordinator_id=C.id where B.vol_id="+result[0].vol_id;
-                        con.query(applied_eve,function(err,result2)
+                        var eves = " select * from events where coordinator_id="+result[0].emp_id;
+                        con.query(eves,function(err,events)
                         {
                             if(err) throw err;
-                            var pics = "select A.id as event_id,A.name as event_name,A.status as event_status,A.city,A.state,C.id as volid,C.name as volname from events as A inner join event_volunteers as B on A.id=B.event_id inner join volunteer as C on B.vol_id=C.id where B.status='Approved' and A.status='scheduled' and C.id="+result[0].vol_id;
-                            con.query(pics,function(err,result3)
+                            res.render('empdashboard.ejs',{"title":"Dashboard | "+result[0].username,"events":events});
+                        });
+
+                    }
+                    else
+                    {
+                        var eves = "select A.*,B.name as cname,B.phone as cphone from `events` as A inner join `employees` as B on A.coordinator_id = B.id where A.id not in (select `event_id` from `event_volunteers` where `vol_id`='"+result[0].vol_id+"')";
+                        con.query(eves,function(err,events)
+                        {
+                            if(err) throw err;
+                            var applied_eve = "select * ,B.status as can_sta,C.name as cname,C.phone,A.name as ename from events as A inner join event_volunteers as B on A.id = B.event_id inner join employees as C on A.coordinator_id=C.id where B.vol_id="+result[0].vol_id;
+                            con.query(applied_eve,function(err,result2)
                             {
-                                res.render('dashboard.ejs',
+                                if(err) throw err;
+                                var pics = "select A.id as event_id,A.name as event_name,A.status as event_status,A.city,A.state,C.id as volid,C.name as volname from events as A inner join event_volunteers as B on A.id=B.event_id inner join volunteer as C on B.vol_id=C.id where B.status='Approved' and A.status='scheduled' and C.id="+result[0].vol_id;
+                                con.query(pics,function(err,result3)
                                 {
-                                    "title":"Dashboard | "+result[0].username,
-                                    "events":events,
-                                    "vol_id": result[0].vol_id,
-                                    "applied_events" : result2,
-                                    "pics":result3
+                                    res.render('dashboard.ejs',
+                                    {
+                                        "title":"Dashboard | "+result[0].username,
+                                        "events":events,
+                                        "vol_id": result[0].vol_id,
+                                        "applied_events" : result2,
+                                        "pics":result3
+                                    });
                                 });
                             });
                         });
-                    });
-                    
+                        
+                    }
+                }
+                else{
+                    res.redirect('/err');
                 }
             }
             else{
