@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+    <% include partials/header.ejs %>
+    <body>
+       
+        <div class="container-fluid">
+            <!-- style="color:white; background-image:linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),url('https://d2aq6dqxahe4ka.cloudfront.net/assets/uploads/challenges/63527927973.jpg'); background-repeat: no-repeat;background-size: cover;background-attachment: fixed;" -->
+            <div class="row">
+                <div class="col-md-3" style="height:150vh;overflow-y:scroll;">
+                    <h2 class="text-center">Choose volunteers</h2>
+                    <% events.forEach(function(details){ %>
+                        <div style="border:1px solid rgb(3, 8, 83); padding: 7px;">
+                            <h3 class="text-center"><%= details.name %></h3>
+                            <p class="text-jusified"><%= details.Description %></p><br />
+                            <p class="text-center"><b>From - </b><% var t = details.event_from.toLocaleDateString() %><%= t %> , <% var t = details.event_from.toLocaleTimeString() %><%= t %></p>
+                            <p class="text-center"><b>To - </b> <% var t = details.event_to.toLocaleDateString() %><%= t %> , <% var t = details.event_to.toLocaleTimeString() %><%= t %></p>
+                            <p class="text-center"><b>Candidate Limit</b> - <%= details.candidate_limit %></p>
+                            <p class="text-jusified"><b>Address - </b><%= details.local_addr %>, <%= details.city %>, <%= details.state %></p>
+                            <div align='center' class="button-group">
+                                    <button event_id='<%= details.id %>' class="select_candidates text-center btn btn-sm btn-primary">Choose Volunteers</button>                        
+                                <% if(details.coords!="" && details.coords!=null){ %>
+                                    <button data-toggle="modal" data-target="#myModal1" ltlg='<%= details.coords %>' class="see_loc text-center btn-sm btn-info">Location Map</button>
+                                <% }else{ %>
+                                    <button type="button" class="btn-sm btn btn-danger disabled">Map not available</button>
+                                <%} %>
+                            </div>
+                        </div>
+                    <%}); %>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <h1 class="text-center">Admin Dashboard</h1>
+                    </div>
+                    <div class="row" >
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4" style="border: 1px solid peru;padding :10px;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="text-center">Add an event</h2>
+                                </div>
+                                <div class="card-body">
+                                    <form action="http://localhost:3000/addevent" method="POST">
+                                        <input type="hidden" class="form-control" name="coords" id="coords1"/>
+                                        <div class="form-group">
+                                            <label for="name">Event Name</label>
+                                            <input required="required" type="text" class="form-control" name="name" id="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="desc">Event Description</label>
+                                            <textarea required="required" type="text" class="form-control" name="desc" id="desc"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>From</label>
+                                            <div class='input-group date' id='datetimepicker1'>    
+                                                <input style="font-family: sans-serif;" type='text' name="event_from" class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <div class='input-group date' id='datetimepicker2'>
+                                                <input style="font-family: sans-serif;" type='text' name="event_to" class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="limit">Candidate Limit</label>
+                                            <input required="required" min="1" type="number" class="form-control" name="limit" id="limit">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address">Local Address</label>
+                                            <textarea class="form-control" id="address" name="address"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="city">City</label>
+                                            <input type="text" class="form-control" id="city" name="city" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address">State</label>
+                                            <input type="text" class="form-control" id="state" name="state" />                                </div>
+                                        <div class="form-group">
+                                            <label>Select location on map</label>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" disabled='disabled' id="mapbutton">Click here</button>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="coordinator">Coordinator : </label>
+                                            <select class="form-control" id="coordinator" required="required" name="coordinator">
+                                                <option value="" disabled selected>--SELECT--</option>
+                                                <% data.forEach(function(details){ %>
+                                                <option value="<%= details.id %>">
+                                                    <%= details.id %> - <%= details.name %>
+                                                </option>
+                                            <% }); %>
+                                            </select>
+                                        </div>
+                                        <div class="text-center"><button type="submit" class="btn btn-primary">Submit</button></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4" style="border: 1px solid peru;padding :10px;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="text-center">Add an employee</h2>
+                                </div>
+                                <div class="card-body">
+                                    <form action="http://localhost:3000/empreg" method="POST">
+                                        <div class="form-group">
+                                            <label for="name">Full Name</label>
+                                            <input required="required" type="text" class="form-control" name="name" id="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="age">Age</label>
+                                            <input required="required" type="number" class="form-control" name="age" id="age">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email</label>
+                                            <input required="required" type="email" class="form-control" name="email" id="email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone">Phone</label>
+                                            <input required="required" type="text" max="10" class="form-control" id="phone" name="phone">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address">Address</label>
+                                            <textarea class="form-control" id="address" name="address"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="designation">Designation</label>
+                                            <input type="text" class="form-control" name="designation" id="designation">
+                                        </div>
+                                        <div class="text-center"><button type="submit" class="btn btn-primary">Submit</button></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Select Location (Optional)
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Selected Coordinates</label>
+                            <input style="display: inline-block;" type="text" class="form-control" id="coords"/>
+                        </div>
+                        <div id="map" class="img-responsive" style="width: 550px; height: 350px;"></div>
+                    </div>
+                    
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Event Location
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div id="map1" class="img-responsive" style="width: 550px; height: 350px;"></div>
+                    </div>
+                    
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+        <% include partials/footer.ejs %>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker1').datetimepicker({
+                    minDate : new Date(),
+                    format: 'YYYY-MM-DD HH:mm:ss'
+                });
+            });
+            $(function () {
+                $('#datetimepicker2').datetimepicker({
+                    minDate : new Date(),
+                    format: 'YYYY-MM-DD HH:mm:ss'
+                });
+            });
+            $(document).ready(function()
+            { 
+                var url = "";
+                $('#state,#city,#address').on('keyup',function()
+                {
+                    if($('#state').val()!="" || $('#address').val()!="" || $('#city').val() !="" )
+                    {
+                        $('#mapbutton').attr('disabled',false);
+                        var local_addr = $('#address').val();
+                        var city = $('#city').val();
+                        var state = $('#state').val();
+                        url = "https://maps.googleapis.com/maps/api/geocode/json?address="+local_addr+"+"+city+"+"+state+"+"+"&key=AIzaSyAA4IWMsKnZo3YjevadbJAMLH6bnsC7TiM";
+                        $.getJSON(url, function(data) {
+                            var locations = Array();
+                            console.log(data.results);
+                            for(var p=0;p<data.results.length;p++)
+                            {
+                                var temp = Array();
+                                temp.push(data.results[p].formatted_address);
+                                temp.push(data.results[p].geometry.location.lat);
+                                temp.push(data.results[p].geometry.location.lng);
+                                locations.push(temp);
+                            }
+                            var map = new google.maps.Map(document.getElementById('map'), {
+                                zoom: 4,
+                                center: new google.maps.LatLng(22.15506,78.8399471),
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            });
+
+                            var infowindow = new google.maps.InfoWindow();
+                            var marker, i;
+                            for (i = 0; i < locations.length; i++) {  
+                                    marker = new google.maps.Marker({
+                                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                                    map: map
+                                });
+
+                                google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                                    return function() {
+                                        infowindow.setContent(locations[i][0]);
+                                        infowindow.open(map, marker);
+                                        $('#coords').val(locations[i][1]+","+locations[i][2]);  
+                                        $('#coords1').val(locations[i][1]+","+locations[i][2]);                                    }
+                                })(marker, i));
+                            }
+                        });
+                    }
+                    else{
+                        $('#mapbutton').attr('disabled',true);
+                    }
+                });
+                $('.see_loc').unbind().click(function()
+                {
+                    var ltlg = $(this).attr('ltlg');
+                    var a = ltlg.split(',');
+                    var latr = parseFloat(a[0]);
+                    var longr = parseFloat(a[1]);
+                    var map = new google.maps.Map(document.getElementById('map1'), {
+                        zoom: 10,
+                        center: new google.maps.LatLng(latr,longr),
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+
+                    var infowindow = new google.maps.InfoWindow();
+                    var marker, i;
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(latr,longr),
+                        map: map
+                    });
+
+                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                        return function() {
+                            infowindow.setContent(locations[i][0]);
+                            infowindow.open(map, marker);                                  }
+                    })(marker, i));
+                });
+                $('.select_candidates').unbind().click(function()
+                {
+                    var eve_id = $(this).attr('event_id');
+                    var url = '/selectcandidates/'+eve_id;
+                    window.location.href = url;
+                });
+            });
+            
+        </script>
+    </body>
+</html>

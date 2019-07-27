@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <% include partials/header.ejs %>
+    <body>
+        <div class="container-fluid" >
+            <div class="row">
+                <h1 class="text-center">Set your login credentials</h1>
+            </div><br><br>
+            <!-- style="color:white; background-image:linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),url('https://d2aq6dqxahe4ka.cloudfront.net/assets/uploads/challenges/63527927973.jpg'); background-repeat: no-repeat;background-size: cover;background-attachment: fixed;" -->
+            <div class="row" >
+                <div class="col-md-4"></div>
+                <div class="col-md-4" style="border: 1px solid peru; padding:10px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <p class="text-center">** Remember your username for login</p>
+                        </div>
+                        <div class="card-body">
+                            <form action="http://localhost:3000/loginvalidate" method="POST">
+                                <input type="hidden" name="volid" value="<%= data[0].id %>" />
+                                <div class="form-group">
+                                    <label for="empid">Generated Username:</label>&nbsp;&nbsp;&nbsp;
+                                    <input style="font-family: Arial, Helvetica, sans-serif;" readonly="readonly" type="text" name="username" value="VOL<%= data[0].id %>" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="passowrd">Enter Password</label>
+                                    <input type="password" name="password" class="form-control" id="password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm">Confirm Password:</label>
+                                    <input type="password" name="confirm" class="form-control" id="confirm">
+                                    <p id="msg"></p>
+                                </div> 
+                                <div>
+                                    <button id="submit" type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a style="color : blue;" href="#">Forgot password ?</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+            <% include partials/footer.ejs %>
+        </div>
+        <script>
+            $(document).ready(function()
+            {
+                $('#password').on('keyup',function()
+                {
+                    if($("#password").val()!=$('#confirm').val() || $('#password').val()=="" || $('#confirm').val()=="")
+                    {
+                        $('#msg').text("Password do not match");
+                        $("#msg").css('color','red');
+                        $('#submit').attr('disabled',true);
+                    }
+                    else{
+                        $('#msg').text("Password matched");
+                        $("#msg").css('color','green');
+                        $('#submit').attr('disabled',false);
+                    }
+                });
+                $('#confirm').on('keyup',function()
+                {
+                    if($("#password").val()!=$('#confirm').val() || $('#password').val()=="" || $('#confirm').val()=="")
+                    {
+                        $('#msg').text("Password do not match");
+                        $("#msg").css('color','red');
+                        $('#submit').attr('disabled',true);
+                    }
+                    else{
+                        $('#msg').text("Password matched");
+                        $("#msg").css('color','green');
+                        $('#submit').attr('disabled',false);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

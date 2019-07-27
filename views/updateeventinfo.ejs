@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <% include partials/header.ejs %>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <h1 class="text-center">Event Status</h1>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Event Status</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Members Absent</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Update Status </th>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-success">Mark as Completed</button>
+                                    <button class=" btn btn-sm btn-primary">Mark as Running</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="text-center">
+                                UPDATE EVENT INFORMATION
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12"  style="overflow-x: scroll;">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Skillset</th>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                <% volunteers.forEach(function(details){ %>
+            
+                                    <tr>
+                                        <td><%= details.name %></td>
+                                        <td><%= details.skillset %></td>
+                                        <td><%= details.company %></td>
+                                        
+                                        <% 
+                                            if(details.attendance=='Present')
+                                            {
+                                                %>
+                                                <td class="text-success" style="font-weight : bolder;"><%= details.attendance%></td>
+                                                <td><button event_id='<%= event_id %>' volid='<%= details.id %>' class="btn mark_absent btn-sm btn-danger">Mark Absent</button></td>
+                                                <%
+                                            }
+                                            else
+                                            {
+                                                %>
+                                                <td class="text-danger" style="font-weight: bolder;"><%= details.attendance%></td>
+                                                <td><button event_id='<%= event_id %>' volid='<%= details.id %>' class="btn mark_present btn-sm btn-success">Mark Present</button></td>
+                                                <%
+                                            }
+                                        %>
+                                    </tr>
+            
+                                <% });%>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include partials/footer.ejs %>
+    </body>
+    <script>
+        $(".mark_present").unbind().click(function(){
+            var vol_id = $(this).attr('volid');
+            var event_id = $(this).attr('event_id');
+            $.ajax({
+                type : 'POST',
+                url : '/changeattendance',
+                data : {
+                    vol_id : vol_id,
+                    event_id : event_id,
+                    status : 'Present'
+                },
+                success : function(data)
+                {
+                    console.log(data);
+                    window.location.reload();
+                }
+            });
+        });
+        $(".mark_absent").unbind().click(function(){
+            var vol_id = $(this).attr('volid');
+            var event_id = $(this).attr('event_id');
+            $.ajax({
+                type : 'POST',
+                url : '/changeattendance',
+                data : {
+                    vol_id : vol_id,
+                    event_id : event_id,
+                    status : 'Absent'
+                },
+                success : function(data)
+                {
+                    console.log(data);
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+</html>

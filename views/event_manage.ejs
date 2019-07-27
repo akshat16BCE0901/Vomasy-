@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <% include partials/header.ejs %>
+    <body>
+       
+        <div class="container-fluid">
+            <div class="row" style="background-color: rgb(191, 251, 199);padding-bottom: 20px;">
+                <div class="col-md-4 text-center">
+                    <h3 class="text-center" style="font-family: Georgia, 'Times New Roman', Times, serif;">Event id - <%= events[0].eve_id %> </h3>
+                    <h3 class="text-center" style="font-family: Georgia, 'Times New Roman', Times, serif;">Event Name - <%= events[0].eve_name %> </h3>
+                    
+                </div>
+                <div class="col-md-8 text-center">
+                    <h3 class="text-center" style="font-family: Georgia, 'Times New Roman', Times, serif;">Coordinator ID - <%= events[0].coordinator_id %></h3>
+                    <h3 class="text-center" style="font-family: Georgia, 'Times New Roman', Times, serif;">Coordinator Name - <%= coordinator[0].name %></h3>
+                    <h3 class="text-center" style="font-family: Georgia, 'Times New Roman', Times, serif;">Coordinator's Contact - <%= coordinator[0].phone %></h3>
+                </div>
+            </div>
+            <div class="row"">
+                <div class="col-md-2" style="padding: 10px;">
+                    <h2 class="text-center" >Volunteer Stats</h2>
+                    <p class="text-center h4"><b>Candidate Limit : </b><%=  events[0].l; %></p>
+                    <% var total = 0;
+                        var app = 0;
+                        var wait=  0;
+                        var rej = 0;
+                        summary.forEach(function(summary1){
+                            if(summary1.status == "Approved")
+                            {
+                                app = summary1.c ;
+                                total+=summary1.c;
+                            }
+                            else if(summary1.status=="Waitlisted")
+                            {
+                                wait = summary1.c;
+                                total+=summary1.c;
+                            }
+                            else if(summary1.status=="Not Approved")
+                            {
+                                rej = summary1.c;
+                            }
+                        %>
+                    <%}); %>
+                    <p class="text-center text-success h4"><b>Approved : </b><span class="text-success"><%=  app %></span></p>
+                    <p class="text-center text-warning h4"><b>Waitlisted : </b><span class="text-warning"><%=  wait %></span></p>
+                    <p class="text-center text-danger h4"><b>Rejected : </b><span class="text-danger"><%=  rej %></span></p>
+                    <hr />
+                    <p class="text-center h4"><b>Total considered : </b><%=  total %></p>
+                </div>
+                <div style="overflow-x: scroll; border : 1px solid black; padding: 10px;" border=1 class="col-md-10">
+                    <h1 class="text-center">Select candidates</h1>
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Volunteer ID</th>
+                            <th>Volunteer Name</th>
+                            <th>Volunteer Skillset</th>
+                            <th>Volunteer Company</th>
+                            <th>Status</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    <% events.forEach(function(details){ %>
+                        <tr>
+                            <td><%= details.id %></td>
+                            <td><%= details.name %></td>
+                            <td><%= details.skillset %></td>
+                            <td><%= details.company %></td>
+                            <td><%= details.status %></td>
+                            <td><div class="btn-group">
+                                <button type="button" eve_id='<%= details.eve_id %>' volid ='<%= details.id %>' class="btn-1 btn btn-success">Approve</button>
+                                <button type="button" eve_id='<%= details.eve_id %>' volid ='<%= details.id %>' class="btn-2 btn btn-warning">Waitlist</button>
+                                <button type="button" eve_id='<%= details.eve_id %>' volid ='<%= details.id %>' class="btn-3 btn btn-danger">Reject</button>
+                            </div></td>
+                        </tr>
+                    <% }) %>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <% include partials/footer.ejs %>
+    </body>
+    <script>
+        $('.btn-1').unbind().click(function()
+        {
+            var volid = $(this).attr('volid');
+            var eve_id = $(this).attr('eve_id');
+            var status = "Approved";
+            $.ajax({
+               
+                type : 'POST',
+                url : '/updatestatus',
+                data : {
+                    vol_id : volid,
+                    event_id : eve_id,
+                    new_status : status
+                },
+                success : function(data)
+                {
+                    window.location.reload();
+                }
+            });
+        });
+
+        $('.btn-2').unbind().click(function()
+        {
+            var volid = $(this).attr('volid');
+            var eve_id = $(this).attr('eve_id');
+            var status = "Waitlisted";
+            $.ajax({
+               
+               type : 'POST',
+               url : '/updatestatus',
+               data : {
+                   vol_id : volid,
+                   event_id : eve_id,
+                   new_status : status
+               },
+               success : function(data)
+               {
+                   window.location.reload();
+               }
+           });
+        });
+
+        $('.btn-3').unbind().click(function()
+        {
+            var volid = $(this).attr('volid');
+            var eve_id = $(this).attr('eve_id');
+            var status = "Not Approved";
+            $.ajax({
+               
+               type : 'POST',
+               url : '/updatestatus',
+               data : {
+                   vol_id : volid,
+                   event_id : eve_id,
+                   new_status : status
+               },
+               success : function(data)
+               {
+                   window.location.reload();
+               }
+           });
+        });
+    </script>
+</html>

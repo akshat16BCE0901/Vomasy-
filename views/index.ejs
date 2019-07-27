@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <% include partials/header.ejs %>
+    <body>
+        <% if(error){ %>
+            <script>
+                alert("Invalid Username or password");
+            </script>
+        <% } %>
+        <div class="container-fluid" >
+            <div class="row">
+                <h1 class="text-center">Akshat Singhal volunteer management portal</h1>
+            </div><br><br>
+            <!-- style="color:white; background-image:linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),url('https://d2aq6dqxahe4ka.cloudfront.net/assets/uploads/challenges/63527927973.jpg'); background-repeat: no-repeat;background-size: cover;background-attachment: fixed;" -->
+            <div class="row" >
+                <div class="col-md-1"></div>
+                <div class="col-md-4" style="border: 1px solid peru; padding:10px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="text-center">Login</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-justified nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#home">Volunteer login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#menu1">Employee Login</a>
+                                </li>
+                            </ul>
+                                    
+                            <div class="tab-content">
+                                <div id="home" class="tab-pane active"><br>
+                                    <h3 class="text-center">Volunteer Login</h3>
+                                    <form action="http://localhost:3000/login" method="POST">
+                                        <input type="hidden" name="role" value="volunteer" />
+                                        <div class="form-group">
+                                            <label for="email1">Username:</label>
+                                            <input type="text" name="username" class="form-control" id="email1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pwd">Password:</label>
+                                            <input type="password" name="password" class="form-control" id="pwd">
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a style="color: snow" href="#">Forgot password ?</a>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="menu1" class="tab-pane fade"><br>
+                                    <h3 class="text-center">Employee Login</h3>
+                                    <form action="http://localhost:3000/login" method="POST">
+                                        <input type="hidden" name="role" value="employee" />
+                                        <div class="form-group">
+                                            <label for="email1">Username:</label>
+                                            <input type="text" name="username" class="form-control" id="email1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pwd">Password:</label>
+                                            <input type="password" name="password" class="form-control" id="pwd">
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a style="color: snow" href="#">Forgot password ?</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-4" style="border: 1px solid peru;padding :10px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="text-center">New user ? Register !!!</h2>
+                        </div>
+                        <div class="card-body">
+                            <form action="http://localhost:3000/register" method="POST">
+                                <div class="form-group">
+                                    <label for="name">Full Name</label>
+                                    <input required="required" type="text" class="form-control" name="name" id="name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="age">Age</label>
+                                    <input required="required" type="number" class="form-control" name="age" id="age">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input required="required" type="email" class="form-control" name="email" id="email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input required="required" type="text" max="10" class="form-control" id="phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <textarea class="form-control" id="address" name="address"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="skillset">Skillset</label>
+                                    <input type="text" class="form-control" name="skillset" id="skillset">
+                                </div>
+                                <div class="form-group">
+                                    <label for="company">Company</label>
+                                    <input type="text" class="form-control" name="company" id="company">
+                                </div>
+                                <div class="text-center"><button type="submit" class="btn btn-primary">Submit</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+        <% include partials/footer.ejs %>
+    </body>
+</html>

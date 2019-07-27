@@ -1,0 +1,136 @@
+<html>
+    <% include partials/header.ejs %>
+    <body>
+        <div class="container">
+            <div class="row">
+                <h1 class="text-center">Your Events</h1>
+            </div>
+            <p style="display: none;" id="curr_la"></p>
+            <p style="display: none;" id="curr_lo"></p>
+            <div align='center' class="row display-flex text-center">
+                <% events.forEach(function(details){ %>
+                <div class="col-md-3" style="border:1px solid rgb(3, 8, 83); padding: 7px;">
+                    <h3 class="text-center"><%= details.name %></h3>
+                    <p class="text-jusified"><%= details.Description %></p><br />
+                    <p class="text-center"><b>From - </b><% var t = details.event_from.toLocaleDateString() %><%= t %> , <% var t = details.event_from.toLocaleTimeString() %><%= t %></p>
+                    <p class="text-center"><b>To - </b> <% var t = details.event_to.toLocaleDateString() %><%= t %> , <% var t = details.event_to.toLocaleTimeString() %><%= t %></p>
+                    <p class="text-center"><b>Candidate Limit</b> - <%= details.candidate_limit %></p>
+                    <p class="text-jusified"><b>Address - </b><%= details.local_addr %>, <%= details.city %>, <%= details.state %></p>
+                    <div align='center' class="button-group">
+                        <button event_id='<%= details.id %>'class="updateinfo text-center btn btn-primary">Update info</button>                        
+                        <% if(details.coords!="" && details.coords!=null){ %>
+                            <button data-toggle="modal" data-target="#myModal" ltlg='<%= details.coords %>' class="mapbtn text-center btn btn-info">Location Map</button>
+                        <% }else{ %>
+                            <button type="button" class="btn btn-danger disabled">Map not available</button>
+                        <%} %>
+                    </div>
+                </div>
+                <%}); %>
+                
+            </div><br>
+            <br>
+            <br>
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Event Location
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div id="map" class="img-responsive" style="width: 550px; height: 350px;"></div>
+                        </div>
+                        
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include partials/footer.ejs %>
+        <script>
+            var curr_long;
+            var curr_lat;
+            function getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                } else { 
+                    document.write("geolocation not supported");
+                }
+            }
+
+            function showPosition(position) {
+                curr_lat = position.coords.latitude; 
+                curr_long=position.coords.longitude;
+                $('#curr_la').html(curr_lat);
+                $('#curr_lo').html(curr_long);
+            }
+            getLocation();
+            function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) 
+            {
+                directionsService.route({
+                    origin: pointA,
+                    destination: pointB,
+                    travelMode: google.maps.TravelMode.DRIVING
+                }, function(response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
+                    }
+                });
+            }
+            $('.mapbtn').on('click',function()
+            {
+                
+                var ltlg = $(this).attr('ltlg');
+                var a = ltlg.split(',');
+                var uluru = {lat: parseFloat(a[0]), lng: parseFloat(a[1])};
+                console.log(uluru);
+                var curr_lati = $('#curr_la').html();
+                var curr_longi = $('#curr_lo').html();
+                console.log(curr_lati);
+                console.log(curr_longi);
+                var marker = new google.maps.Marker({position: uluru, map: map});
+                    var pointA = new google.maps.LatLng(curr_lati, curr_longi);
+                    var pointB = new google.maps.LatLng(parseFloat(a[0]), parseFloat(a[1]));
+                    var myOptions = {
+                        zoom: 7,
+                        center: pointA
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), myOptions);
+                    var directionsService = new google.maps.DirectionsService;
+                    var directionsDisplay = new google.maps.DirectionsRenderer({
+                        map: map
+                    });
+                    var markerA = new google.maps.Marker({
+                        position: pointA,
+                        title: "point A",
+                        map: map
+                    });
+                    var markerB = new google.maps.Marker({
+                        position: pointB,
+                        title: "point B",
+                        map: map
+                    });
+
+                    calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB);
+            });
+        </script>
+        <script>
+            $(document).ready(function()
+            {
+                $(".updateinfo").unbind().click(function()
+                {
+                    var event = $(this).attr('event_id');
+                    location.href = '/updateeventinfo/'+event;
+                });
+            });
+        </script>
+    </body>
+</html>
