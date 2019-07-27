@@ -321,6 +321,9 @@ con.connect(function(err)
     });
 });
 
+con.on('error', function(err) {
+    console.log(err.code);
+});
 app.listen(port,function()
 {
     console.log("server listening on port : "+port);
