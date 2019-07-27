@@ -14,11 +14,13 @@ app.use(
 );
 
 var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database : "careworks"
+    host: "us-cdbr-iron-east-02.cleardb.net",
+    user: "b07faff88cfdbe",
+    password: "c498db8f",
+    database : "heroku_ef028838fef118f"
+    // mysql://b07faff88cfdbe:c498db8f@us-cdbr-iron-east-02.cleardb.net/heroku_ef028838fef118f?reconnect=true
 });
+
 
 con.connect(function(err)
 {
