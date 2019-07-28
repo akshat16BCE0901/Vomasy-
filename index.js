@@ -13,7 +13,7 @@ app.use(
     bodyParser({extended : true})
 );
 
-var con = mysql.createConnection({
+var config = mysql.createConnection({
     host: "us-cdbr-iron-east-02.cleardb.net" || "localhost",
     user: "b07faff88cfdbe" || "root",
     password: "c498db8f" || "",
@@ -21,16 +21,24 @@ var con = mysql.createConnection({
     // mysql://b07faff88cfdbe:c498db8f@us-cdbr-iron-east-02.cleardb.net/heroku_ef028838fef118f?reconnect=true
 });
 
+function startConnection() {
+    console.error('CONNECTING');
+    con = mysql.createConnection(config);
+    con.connect(function(err) {
+        if (err) {
+            console.error('CONNECT FAILED', err.code);
+            startConnection();
+        }
+        else
+            console.error('CONNECTED');
+    });
+    con.on('error', function(err) {
+        if (err.fatal)
+            startConnection();
+    });
+}
 
-con.connect(function(err)
-{
-    if(err) throw err;
-    console.log("Connected to database");
-});
-
-con.on('error', function(err) {
-    console.log(err.code);
-});
+startConnection();
 
 app.get('/',function(req,res)
 {
